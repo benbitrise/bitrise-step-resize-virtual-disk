@@ -1,9 +1,9 @@
 title: |-
   resize-virtual-disk
 summary: |
-  If your workflow requires more disk space, use this step to claim additional space for the virtual machine disk. This step is only comptabile with macOS stacks.
+  If your workflow requires more disk space, use this step to claim additional space for the virtual machine disk. This step is only comptabile with macOS stacks on XL machine types.
 description: |
-  If your workflow requires more disk space, use this step to claim additional space for the virtual machine disk. This step is only comptabile with macOS stacks.
+  If your workflow requires more disk space, use this step to claim additional space for the virtual machine disk. This step is only comptabile with macOS stacks on XL machine types.
 website: https://github.com/benbitrise/bitrise-step-resize-virtual-disk
 source_code_url: https://github.com/benbitrise/bitrise-step-resize-virtual-disk
 support_url: https://github.com/benbitrise/bitrise-step-resize-virtual-disk/issues
@@ -30,17 +30,20 @@ toolkit:
     entry_file: step.sh
 
 inputs:
-  - blabla: "blabla"
+  - space_to_claim: 0
     opts:
-      title: "Bla Bla"
+      title: "Amount of space to claim"
       description: |
-        Bla bla
+        How much space do you want to claim?
+        
+        The default value "0" will claim all available free space.
+        
+        Examples of other options are "50%" for 50% of available space and "+10GB" for adding 10GB of space.
       is_expand: true
       is_required: false
 outputs:
-  - BLA: ""
+  - BYTES_RECLAIMED:
     opts:
-      title: "Bla"
-      summary: "bla."
-      description: "Bla."
-      is_expand: false
+      title: "Bytes Reclaimed"
+      summary: "Number of bytes were reclaimed by the resize"
+      description: "Number of bytes were reclaimed by the resize"

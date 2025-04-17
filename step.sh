@@ -10,6 +10,9 @@ if [[ $(uname) != "Darwin" ]]; then
     exit 1
 fi
 
+
+
+
 # Run diskutil list and capture the output
 DISKUTIL_OUTPUT=$(diskutil list)
 
@@ -68,9 +71,16 @@ fi
 echo "Found internal physical disk: $INTERNAL_DISK"
 echo "APFS Container identifier: $CONTAINER_SCHEME"
 
+BEFORE_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Container Total Space" | awk '{print $4}' | sed 's/,//g' | sed 's/(//')
+
 # Run the resize command
 echo "----------------------------------------"
 echo "Executing: diskutil apfs resizeContainer $CONTAINER_SCHEME 0"
-diskutil apfs resizeContainer "$CONTAINER_SCHEME" 0
-
+diskutil apfs resizeContainer "$CONTAINER_SCHEME" "$space_to_claim"
 echo "Resize operation completed."
+
+AFTER_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Container Total Space" | awk '{print $4}' | sed 's/,//g' | sed 's/(//')
+
+DIFF_BYTES=$((AFTER_BYTES - BEFORE_BYTES))
+envman add --key BYTES_RECLAIMED --value "${DIFF_BYTES}"
+
