@@ -71,7 +71,7 @@ fi
 echo "Found internal physical disk: $INTERNAL_DISK"
 echo "APFS Container identifier: $CONTAINER_SCHEME"
 
-BEFORE_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Container Total Space" | awk '{print $4}' | sed 's/,//g' | sed 's/(//')
+BEFORE_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Disk Size" | awk -F'[()]' '{print $2}' | awk '{print $1}')
 
 # Run the resize command
 echo "----------------------------------------"
@@ -79,8 +79,9 @@ echo "Executing: diskutil apfs resizeContainer $CONTAINER_SCHEME 0"
 diskutil apfs resizeContainer "$CONTAINER_SCHEME" "$space_to_claim"
 echo "Resize operation completed."
 
-AFTER_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Container Total Space" | awk '{print $4}' | sed 's/,//g' | sed 's/(//')
+AFTER_BYTES=$(diskutil info $CONTAINER_SCHEME | grep "Disk Size" | awk -F'[()]' '{print $2}' | awk '{print $1}')
 
 DIFF_BYTES=$((AFTER_BYTES - BEFORE_BYTES))
+echo "Claimed ${DIFF_BYTES} bytes"
 envman add --key BYTES_RECLAIMED --value "${DIFF_BYTES}"
 
